@@ -4,6 +4,9 @@ Foundry is infrastructure for compute sharing and utilization. Suppliers can dow
 
 Undergirding Foundry is a set of state-of-the-art fault-tolerant and workload aware schedulers that help maximize utilization and liquidity in the network. Foundry is also heavily integrated with leading tools for distributed computing, such as Ray and Dask Distributed.
 
+Process next steps
+- [ ] create trello dashboard to track and  organize eng progress
+
 Next steps
 - [ ] seed npm package template on user side
 - [ ] create initial coordination database (e.g. to hold ip addresses)
