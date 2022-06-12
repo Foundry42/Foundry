@@ -47,7 +47,7 @@ def parse_gres(gres: bytes = None) -> List[bytes]:
 
 def interpret_node_list(
         node_list: bytes,
-        ) -> Dict[Any]:
+        ) -> Dict[Any, Any]:
     """
     Parse list of nodes and return the number of node subclusters.
 
