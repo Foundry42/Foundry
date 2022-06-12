@@ -69,19 +69,30 @@ def interpret_node_list(
             # if numbers, convert, subtract and return
             a = dash_split[0][-1] # grab last character of first
             x = dash_split[0][-2:] # grab last 2 in case 10-99
-            m = dash_split[0][-3:]
+            m = dash_split[0][-3:] # grab last 3 in case 100-999
+            q = dash_split[0][-4:] # grab last 4 in case 1000-9999
+
             b = dash_split[-1][0] # grab first character of last
             y = dash_split[-1][0:2].split(']')[0] # grab first two in case 10-99
-            n = dash_split[-1][0:3].split(']')[0]
+            n = dash_split[-1][0:3].split(']')[0] # grab first three in case 100-999
+            s = dash_split[-1][0:4].split(']')[0] # grab first four in case 100-999
+
             # if all  char values, return
             if a.isnumeric() and b.isnumeric:
-                if m.isnumeric():
+                # check first num in range
+                if q.isnumeric():
+                    first_num = int(q)
+                elif m.isnumeric():
                     first_num = int(m)
                 elif x.isnumeric():
                     first_num = int(x)
                 else:
                     first_num = int(a)
-                if n.isnumeric():
+
+                # check second num in range
+                if s.isnumeric():
+                    second_num = int(s)
+                elif n.isnumeric():
                     second_num = int(n)
                 elif y.isnumeric():
                     second_num = int(y)
