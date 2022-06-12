@@ -74,16 +74,16 @@ def interpret_node_list(
             y = dash_split[-1][0:2].split(']')[0] # grab first two in case 10-99
             n = dash_split[-1][0:3].split(']')[0]
             # if all  char values, return
-            if check_string_is_num(a) and check_string_is_num(b):
-                if check_string_is_num(m):
+            if a.isnumeric() and b.isnumeric:
+                if m.isnumeric():
                     first_num = int(m)
-                elif check_string_is_num(x):
+                elif x.isnumeric():
                     first_num = int(x)
                 else:
                     first_num = int(a)
-                if check_string_is_num(n):
+                if n.isnumeric():
                     second_num = int(n)
-                elif check_string_is_num(y):
+                elif y.isnumeric():
                     second_num = int(y)
                 else:
                     second_num = int(b)
