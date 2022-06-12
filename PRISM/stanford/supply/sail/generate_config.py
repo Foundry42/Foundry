@@ -34,14 +34,43 @@ def parse_parition_gpu_info(partition: str = None) -> Dict[Any, Any]:
         node_list = line[2]
 
         # parse_gres
-        parse_gres(gres)
+        parse_gres_sinfo(gres)
 
         # parse node_list
         interpret_node_list(node_list)
 
-def parse_gres(gres: bytes = None) -> List[bytes]:
-    print(gres)
+def parse_gres_sinfo(
+        gres: bytes,
+        ) -> Dict[Any, Any]:
+    """
+    Parse GPU info string.
 
+    Args:
+        gpu_byte_string: byte string structured 'gres:(optional:type):num_gpus'
+        job_time: job time associated with this gpu request
+    Return:
+        gpuSpec object
+    """
+    # split gres list by gpu_type/gpu_box
+    gres_nodes = gres.split(b','')
+    separated_gpu_info = gres.split(b':')
+    if len(separated_gpu_info) == 3:
+        gres, gres_type, num_gres = separated_gpu_info
+    elif len(separated_gpu_info) == 2:
+        gres, num_gres = separated_gpu_info
+        gres_type = b'unspecified'
+    else:
+        gres = b'(null)'
+        gres_type = b'unspecified'
+        num_gres = 0
+
+    gpu_info = {
+            'gres':gres.decode("utf-8"),
+            'gres_type': gres_type.decode("utf-8"),
+            'num_gres': safe_cast_byte_to_int(num_gres),
+            'time': job_time,
+                }
+    return gpu_info
 
 
 
