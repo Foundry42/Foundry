@@ -58,7 +58,7 @@ def interpret_node_list(
     """
     num_nodes = 0
     # split node list by comma
-    node_list = node_list.split(',')
+    node_list = node_list.decode("utf-8").split(',')
 
     # by subnode, extract node count by reading ranges
     for node in node_list:
