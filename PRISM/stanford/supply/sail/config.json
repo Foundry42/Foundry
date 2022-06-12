@@ -1,0 +1,72 @@
+"""
+Supply config file.
+
+Assumes supply is accessed via Slurm.
+"""
+{
+  'available_partitions': {
+    'iris': {
+      'gpu_config': {
+        'total': ,
+        'types': {
+          'titanrtx': {
+            'total': 24,
+            'nodes': 3,
+            'node_list': 'iris gpu:titanrtx: 8 iris[
+              1-3
+            ]',
+          },
+          '2070': {
+            'total': 7,
+            'nodes': 1,
+            'node_list': 'iris4',
+          },
+          '2060': {
+            'total': 3,
+            'nodes': 1,
+            'node_list': 'iris4',
+          },
+          'a40':
+        },
+      },
+    },
+    'iliad': {},
+    'sphinx': {
+      'total': 24,
+      'types': [
+        {'a100': {
+          'total': 24,
+          'nodes': 3,
+          'node_list': 'gpu:a100: 8 sphinx[
+              1-3
+            ]'
+          }
+        },
+      ],
+    },
+    'john': {},
+    'jag-lo': {},
+    'john-lo': {},
+    ''
+  },
+
+
+
+  'labs': {
+    'plambda': {
+      'professor': 'percy liang'
+    },
+    'iliad': {
+      'professor': 'dorsa sadigh'
+    },
+    'snap': {
+      'professor': 'jure leskovec'
+    },
+    'iris': {
+      'professor': 'chelsea finn'
+    },
+    'factory': {
+      'professor': 'chris re'
+    },
+  }
+}
