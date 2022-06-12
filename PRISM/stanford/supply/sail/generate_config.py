@@ -37,7 +37,7 @@ def parse_parition_gpu_info(partition: str = None) -> Dict[Any, Any]:
         parse_gres(gres)
 
         # parse node_list
-        interim_node_list(node_list)
+        interpret_node_list(node_list)
 
 def parse_gres(gres: bytes = None) -> List[bytes]:
     print(gres)
