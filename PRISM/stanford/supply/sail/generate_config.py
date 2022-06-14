@@ -2,7 +2,7 @@ import subprocess
 import time
 from typing import Any, Generic, Optional, Dict, List
 from collections import OrderedDict
-
+import json
 ######
 # UTILS - move to separate file once this grows
 ######
@@ -170,9 +170,25 @@ def interpret_node_list(
     print('num nodes for node_list: ', num_nodes)
     return num_nodes
 
+## reading from and writing to the JSON file
+# Opening JSON file
+f = open('config.json')
 
+# returns JSON object as
+# a dictionary
+data = json.load(f)
+
+# Iterating through the json
+# list
+for i in data['available_partitions']:
+    print(i)
+# Closing file
+f.close()
 
 
 parse_parition_gpu_info('iris')
 parse_parition_gpu_info('sphinx')
 parse_parition_gpu_info('jag-lo')
+fh = open("config.json", "a+")
+fh.write(json.dumps()) # added an extra ')'.. code will now work
+fh.close()
