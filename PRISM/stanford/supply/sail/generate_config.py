@@ -3,7 +3,27 @@ import time
 from typing import Any, Generic, Optional, Dict, List
 from collections import OrderedDict
 
+######
+# UTILS - move to separate file once this grows
+######
 
+def safe_cast_byte_to_int(byte_string: bytes) -> int:
+    """
+    Turn byte sequence to int.
+
+    Args:
+        byte_string: byte sequence.
+    Return:
+        casted to int, unless null -> 0
+    """
+    if byte_string == b'(null)':
+        return 0
+    else:
+        return int(byte_string)
+
+######
+# UTILS
+######
 def parse_parition_gpu_info(partition: str = None) -> Dict[Any, Any]:
     # Run initial subprocess to query for partition information
     query = subprocess.run(
