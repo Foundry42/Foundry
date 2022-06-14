@@ -173,3 +173,5 @@ def interpret_node_list(
 
 
 parse_parition_gpu_info('iris')
+parse_parition_gpu_info('sphinx')
+parse_parition_gpu_info('jag-lo')
