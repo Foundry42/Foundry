@@ -172,7 +172,7 @@ def interpret_node_list(
 
 ## reading from and writing to the JSON file
 # Opening JSON file
-f = open('config.json')
+f = open('./config.json')
 
 # returns JSON object as
 # a dictionary
@@ -180,8 +180,10 @@ data = json.load(f)
 
 # Iterating through the json
 # list
-for i in data['available_partitions']:
-    print(i)
+for partition in data['available_partitions']:
+    print(partition)
+    data[partition] = parse_parition_gpu_info(partition)
+
 # Closing file
 f.close()
 
@@ -189,6 +191,6 @@ f.close()
 parse_parition_gpu_info('iris')
 parse_parition_gpu_info('sphinx')
 parse_parition_gpu_info('jag-lo')
-fh = open("config.json", "a+")
-fh.write(json.dumps()) # added an extra ')'.. code will now work
+fh = open("/.config.json", "a+")
+fh.write(json.dumps(data)) # added an extra ')'.. code will now work
 fh.close()
