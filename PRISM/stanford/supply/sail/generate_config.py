@@ -49,6 +49,7 @@ def parse_parition_gpu_info(partition: str = None) -> Dict[Any, Any]:
     gres_info_list = []
     gres_info = {}
     gres_info['total_gres'] = 0
+    gres_info['partition'] = partition
 
     iterable_query = query_response[1:-1]
     for line in iterable_query:
