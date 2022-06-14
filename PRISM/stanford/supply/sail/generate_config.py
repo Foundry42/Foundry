@@ -46,7 +46,10 @@ def parse_parition_gpu_info(partition: str = None) -> Dict[Any, Any]:
 
     # Per line in query_response, accumulate info into dict for config
     # cleaning query response to remove keys and end token
-    gres_info = []
+    gres_info_list = []
+    gres_info = {}
+    gres_info['total_gres'] = 0
+
     iterable_query = query_response[1:-1]
     for line in iterable_query:
         #TODO(jq): get rid of hardcoded keys
@@ -60,7 +63,12 @@ def parse_parition_gpu_info(partition: str = None) -> Dict[Any, Any]:
             # parse node_list
             node_num = interpret_node_list(node_list)
             gres_dict['total_gres'] = gres_dict['num_gres'] * node_num
-            gres_info.append(gres_dict)
+            gres_info_list.append(gres_dict)
+            gres_info['total_gres'] += gres_dict['total_gres']
+
+
+    gres_info['partition_details'] = gres_info_list
+
     print('gres info: ', gres_info)
     return gres_info
 
