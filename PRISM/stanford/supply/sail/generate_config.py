@@ -26,18 +26,23 @@ def parse_parition_gpu_info(partition: str = None) -> Dict[Any, Any]:
 
     # Per line in query_response, accumulate info into dict for config
     # cleaning query response to remove keys and end token
+    gres_info = []
     iterable_query = query_response[1:-1]
     for line in iterable_query:
         #TODO(jq): get rid of hardcoded keys
         partition_name = line[0]
-        gres = line[1]
+        gres_list = line[1].split(b',')
         node_list = line[2]
 
-        # parse_gres
-        parse_gres_sinfo(gres)
-
-        # parse node_list
-        interpret_node_list(node_list)
+        # parse and process gres list
+        for gres in gres_list:
+            gres_dict = parse_gres_sinfo(gres)
+            # parse node_list
+            node_num = interpret_node_list(node_list)
+            gres_dict['total_gres'] = gres_dict['num_gres'] * node_num
+            gres_info.append(gres_dict)
+    print('gres info: ', gres_info)
+    return gres_info
 
 def parse_gres_sinfo(
         gres: bytes,
@@ -52,7 +57,8 @@ def parse_gres_sinfo(
         gpuSpec object
     """
     # split gres list by gpu_type/gpu_box
-    gres_nodes = gres.split(b','')
+    gres_nodes = gres.split(b',')
+
     separated_gpu_info = gres.split(b':')
     if len(separated_gpu_info) == 3:
         gres, gres_type, num_gres = separated_gpu_info
@@ -67,9 +73,8 @@ def parse_gres_sinfo(
     gpu_info = {
             'gres':gres.decode("utf-8"),
             'gres_type': gres_type.decode("utf-8"),
-            'num_gres': safe_cast_byte_to_int(num_gres),
-            'time': job_time,
-                }
+            'num_gres': safe_cast_byte_to_int(num_gres)
+            }
     return gpu_info
 
 
