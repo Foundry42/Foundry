@@ -1,35 +1,30 @@
-"""
-Supply config file.
-
-Assumes supply is accessed via Slurm.
-"""
 {
-  'available_partitions': {
-    'iris': {},
-    'iliad': {},
-    'sphinx': {}
-    'john': {},
-    'jag-lo': {},
-    'john-lo': {},
+  "available_partitions": {
+    "iris": {},
+    "iliad": {},
+    "sphinx": {},
+    "john": {},
+    "jag-lo": {},
+    "john-lo": {}
   },
 
 
 
-  'labs': {
-    'plambda': {
-      'professor': 'percy liang'
+  "labs": {
+    "plambda": {
+      "professor": "percy liang"
     },
-    'iliad': {
-      'professor': 'dorsa sadigh'
+    "iliad": {
+      "professor": "dorsa sadigh"
     },
-    'snap': {
-      'professor': 'jure leskovec'
+    "snap": {
+      "professor": "jure leskovec"
     },
-    'iris': {
-      'professor': 'chelsea finn'
+    "iris": {
+      "professor": "chelsea finn"
     },
-    'factory': {
-      'professor': 'chris re'
-    },
+    "factory": {
+      "professor": "chris re"
+    }
   }
 }
