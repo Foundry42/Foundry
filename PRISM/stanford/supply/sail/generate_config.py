@@ -172,7 +172,7 @@ def interpret_node_list(
 
 ## reading from and writing to the JSON file
 # Opening JSON file
-f = open("config.json")
+f = open("./config.json")
 
 # returns JSON object as
 # a dictionary
