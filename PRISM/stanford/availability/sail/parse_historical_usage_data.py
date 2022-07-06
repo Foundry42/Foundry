@@ -4,7 +4,7 @@ from typing import Any, Generic, Optional, Dict, List
 from collections import OrderedDict, namedtuple
 import json
 from datetime import datetime
-
+from dateutil.relativedelta import relativedelta
 #######
 # Add flags to enable dynamic report generation
 #######
@@ -86,14 +86,29 @@ def date_interpreter(
     return datetime_object
 
 def map_sacct_info(
-        start_time: str,
-        sacct_info: Dict[Any, Any]
-        resolution_in_minutes: int = 30
+        start_time: bytes,
+        end_time: bytes,
+        sacct_info: Dict[Any, Any],
+        resolution_in_minutes: int = 30,
         ) -> Dict[Any, Any]:
     """Map saact info query respone to a time-indexed object.
     """
     # Create keys for time-indexed object.
+    current_date = date_interpreter(date=start_time)
+    end_date = date_interpreter(date=end_time)
+    keys = []
+    while current_date <= end_date:
+        keys.append(current_date)
+        # increment current date by resolution_in_minutes
+        current_date += relativedelta(minutes=resolution_in_minutes)
+    
+    time_data = {}
+    for time_object in keys:
+        for jobid, jobdetails in sacct_info.items():
 
-parse_sacct_response(start_time="2022-07-04", key=DFK)
+    return time_data
+
+sacct_info = parse_sacct_response(start_time="2022-07-04", key=DFK)
 date_interpreter(b'2019-01-07T17:15:32')
 
+print(map_sacct_info(start_time=b'2019-01-05T17:15:32', end_time=b'2019-01-07T22:15:32', sacct_info=sacct_info))
