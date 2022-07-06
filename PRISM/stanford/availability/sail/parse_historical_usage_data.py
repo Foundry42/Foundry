@@ -3,6 +3,7 @@ import time
 from typing import Any, Generic, Optional, Dict, List
 from collections import OrderedDict
 import json
+from datetime import datetime
 
 #######
 # Add flags to enable dynamic report generation
@@ -30,10 +31,24 @@ def parse_sacct_response(
             query_parsed[i].split() for i in range(len(query_parsed))
             ]
     print('query_response: ', query_response[0:3])
-
+    # convert date string into a number format 
     # Filter query response info into a dictionary for easy probing
     sacct_info = {}
     return True
+
+def date_interpreter(
+        date: bytes,
+        ) -> float:
+    """Converts date byte string to int so we can do inclusion comparison.
+    
+    Args:
+        date: format b'2019-01-07T17:15:32'
+    Returns:
+        Floating point number. 
+    """
+    # Decode byte string into a standard string.
+
+
 
 parse_sacct_response(start_time="2022-07-04")
 
