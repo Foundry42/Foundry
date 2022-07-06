@@ -11,7 +11,6 @@ from datetime import datetime
 
 DEFAULT_FORMAT = "start,end,elapsed,time,JobID,Jobname,partition,state,MaxRSS,nnodes,ncpus,nodelist,AllocGRES"
 DEFAULT_FORMAT_KEY_DICT = OrderedDict(zip(DEFAULT_FORMAT.split(','),list(range(len(DEFAULT_FORMAT)))))
-print('DEFAULT_FORMAT_KEY_DICT: ', DEFAULT_FORMAT_KEY_DICT)
 class Dict2Class(object):
     def __init__(self, init_dict):
         self.init_dict = init_dict
@@ -42,16 +41,17 @@ def parse_sacct_response(
     query_response = [
             query_parsed[i].split() for i in range(len(query_parsed))
             ]
-    print('query_response: ', query_response[0:3])
     # convert date string into a number format 
     # Filter query response info into a dictionary for easy probing
     sacct_info = {}
-    for job in query_response[1:-1]:
+    # Note - index from 2 to remove key line and delimiter line
+    for job in query_response[2:-1]:
         job_id = job[key.JobID] 
         job_prime = job
         job_prime[key.start] = date_interpreter(job[key.start])
         job_prime[key.end] = date_interpreter(job[key.end])
         sacct_info[job_id] = job_prime
+    print(sacct_info)
     return sacct_info
 
 def date_interpreter(
@@ -64,6 +64,8 @@ def date_interpreter(
     Returns:
         Floating point number. 
     """
+    if date == b'Unknown':
+        return float('inf')
     # Decode byte string into a standard string.
     ## explicit version - brute force, not using datetime api
     ### convert byte string to string
@@ -72,9 +74,7 @@ def date_interpreter(
     date_time = date_time.split('T')
     date, time = date_time
     year, month, day = [int(primitive) for primitive in date.split('-')]
-    print(year, month, day)
     hour, minute, seconds = [int(primitive) for primitive in time.split(':')]
-    print(hour, minute, seconds)
     datetime_object = datetime(
             year=year,
             month=month,
@@ -83,7 +83,6 @@ def date_interpreter(
             minute=minute,
             second=seconds
             )
-    print(datetime_object)
     return datetime_object
 
 
