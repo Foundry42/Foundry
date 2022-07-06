@@ -10,28 +10,17 @@ from datetime import datetime
 #######
 
 DEFAULT_FORMAT = "start,end,elapsed,time,JobID,Jobname,partition,state,MaxRSS,nnodes,ncpus,nodelist,AllocGRES"
-DEFAULT_FORMAT_KEY = namedtuple('DEFAULT_FORMAT_KEY', DEFAULT_FORMAT.replace(',', ' '))
-DFK = DEFAULT_FORMAT_KEY(
-        start=0,
-        end=1,
-        elapsed=2,
-        time=3,
-        JobID=4,
-        Jobname=5,
-        partition=6,
-        state=7,
-        MaxRSS=8,
-        nnodes=9,
-        ncpus=10,
-        nodelist=11,
-        AllocGRES=12
-        )
+DEFAULT_FORMAT_KEY_DICT = OrderedDict(zip(DEFAULT_FORMAT.split(','),list(range(len(DEFAULT_FORMAT)))))
+print('DEFAULT_FORMAT_KEY_DICT: ', DEFAULT_FORMAT_KEY_DICT)
+class Dict2Class(object):
+    def __init__(self, init_dict):
+        self.init_dict = init_dict
+        for key in init_dict:
+            setattr(self,key,init_dict[key])
+    def __str__(self):
+        return str(print(self.init_dict))
 
-class SacctStruct:
-    def __init__(self, **data):
-        self.__dict__.update(data)
-
-print('DFK: ', DFK)
+DFK = Dict2Class(DEFAULT_FORMAT_KEY_DICT)
 def parse_sacct_response(
         start_time: str,
         key: Any,
@@ -58,12 +47,12 @@ def parse_sacct_response(
     # Filter query response info into a dictionary for easy probing
     sacct_info = {}
     for job in query_response[1:-1]:
-        job_id = job[key.job_id]
+        job_id = job[key.JobID] 
         job_prime = job
-        job_prime[key.start] = data_interpreter(job[key.start])
-        job_prime[key.end] = data_interpreter(job[key.end])
-        sacct_info[job_id] = job
-    return True
+        job_prime[key.start] = date_interpreter(job[key.start])
+        job_prime[key.end] = date_interpreter(job[key.end])
+        sacct_info[job_id] = job_prime
+    return sacct_info
 
 def date_interpreter(
         date: bytes,
@@ -99,6 +88,6 @@ def date_interpreter(
 
 
 
-parse_sacct_response(start_time="2022-07-04")
+parse_sacct_response(start_time="2022-07-04", key=DFK)
 date_interpreter(b'2019-01-07T17:15:32')
 
