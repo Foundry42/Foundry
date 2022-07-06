@@ -56,7 +56,7 @@ def parse_sacct_response(
 
 def date_interpreter(
         date: bytes,
-        ) -> float:
+        ) -> Any:
     """Converts date byte string to int so we can do inclusion comparison.
     
     Args:
@@ -65,7 +65,7 @@ def date_interpreter(
         Floating point number. 
     """
     if date == b'Unknown':
-        return float('inf')
+        return datetime.now()
     # Decode byte string into a standard string.
     ## explicit version - brute force, not using datetime api
     ### convert byte string to string
@@ -89,6 +89,7 @@ def map_sacct_info(
         start_time: bytes,
         end_time: bytes,
         sacct_info: Dict[Any, Any],
+        key: Any,
         resolution_in_minutes: int = 30,
         ) -> Dict[Any, Any]:
     """Map saact info query respone to a time-indexed object.
@@ -103,12 +104,22 @@ def map_sacct_info(
         current_date += relativedelta(minutes=resolution_in_minutes)
     
     time_data = {}
-    for time_object in keys:
+    for time in keys:
+        jobs_now = []
         for jobid, jobdetails in sacct_info.items():
-
+            start = jobdetails[key.start]
+            end = jobdetails[key.end]
+            print('start: ', start)
+            print('end: ', end)
+            print('time: ', time)
+            if time >= start and time <= end:
+                print('jobid: ', jobid)
+                jobs_now.append(jobdetails)
+            print('-------')
+        time_data[time] = jobs_now
     return time_data
 
-sacct_info = parse_sacct_response(start_time="2022-07-04", key=DFK)
+sacct_info = parse_sacct_response(start_time="2022-07-03", key=DFK)
 date_interpreter(b'2019-01-07T17:15:32')
 
-print(map_sacct_info(start_time=b'2019-01-05T17:15:32', end_time=b'2019-01-07T22:15:32', sacct_info=sacct_info))
+print(map_sacct_info(start_time=b'2022-07-03T17:15:32', end_time=b'2022-07-05T22:15:32', sacct_info=sacct_info, key=DFK))
