@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 # Add flags to enable dynamic report generation
 #######
 
-DEFAULT_FORMAT = "start,end,elapsed,time,JobID,Jobname,partition,state,MaxRSS,nnodes,ncpus,nodelist,AllocGRES"
+DEFAULT_FORMAT = "start,end,elapsed,time,JobID,partition,nnodes,ncpus,nodelist,AllocGRES"
 DEFAULT_FORMAT_KEY_DICT = OrderedDict(zip(DEFAULT_FORMAT.split(','),list(range(len(DEFAULT_FORMAT)))))
 class Dict2Class(object):
     def __init__(self, init_dict):
@@ -50,6 +50,9 @@ def parse_sacct_response(
         job_prime = job
         job_prime[key.start] = date_interpreter(job[key.start])
         job_prime[key.end] = date_interpreter(job[key.end])
+        # if no GPU, the list is shorter
+        if len(job_prime) < key.AllocGRES:
+            job_prime.append(0) 
         sacct_info[job_id] = job_prime
     print(sacct_info)
     return sacct_info
@@ -117,6 +120,18 @@ def map_sacct_info(
                 jobs_now.append(jobdetails)
             print('-------')
         time_data[time] = jobs_now
+    for time, jobs in time_data.items():
+        total_ncpus = 0
+        total_ngres = 0
+        for job in jobs:
+            print('job: ', job)
+            print('job len: ', len(job))
+
+            print('allocGRES key: ',key.AllocGRES) 
+            gres = job[key.AllocGRES]
+            ncpus = job[key.ncpus]
+            print('gres: ', gres)
+        time_data[time] = {'details': jobs}
     return time_data
 
 sacct_info = parse_sacct_response(start_time="2022-07-03", key=DFK)
