@@ -85,7 +85,14 @@ def date_interpreter(
             )
     return datetime_object
 
-
+def map_sacct_info(
+        start_time: str,
+        sacct_info: Dict[Any, Any]
+        resolution_in_minutes: int = 30
+        ) -> Dict[Any, Any]:
+    """Map saact info query respone to a time-indexed object.
+    """
+    # Create keys for time-indexed object.
 
 parse_sacct_response(start_time="2022-07-04", key=DFK)
 date_interpreter(b'2019-01-07T17:15:32')
