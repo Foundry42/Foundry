@@ -47,8 +47,28 @@ def date_interpreter(
         Floating point number. 
     """
     # Decode byte string into a standard string.
-
+    ## explicit version - brute force, not using datetime api
+    ### convert byte string to string
+    date_time = date.decode("utf-8")
+    ### split date string by date and time
+    date_time = date_time.split('T')
+    date, time = date_time
+    year, month, day = [int(primitive) for primitive in date.split('-')]
+    print(year, month, day)
+    hour, minute, seconds = [int(primitive) for primitive in time.split(':')]
+    print(hour, minute, seconds)
+    datetime_object = datetime(
+            year=year,
+            month=month,
+            day=day,
+            hour=hour,
+            minute=minute,
+            second=seconds
+            )
+    print(datetime_object)
+    return True
 
 
 parse_sacct_response(start_time="2022-07-04")
+date_interpreter(b'2019-01-07T17:15:32')
 
