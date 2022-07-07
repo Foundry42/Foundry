@@ -9,7 +9,40 @@ from dateutil.relativedelta import relativedelta
 # Add flags to enable dynamic report generation
 #######
 
-DEFAULT_FORMAT = "start,end,elapsed,time,JobID,partition,nnodes,ncpus,nodelist,AllocGRES"
+#TODO(Foundry42): create common utils directory for parse_gpu and similar functions
+def parse_gres(
+        gres: bytes,
+        ) -> Dict[Any, Any]:
+    """
+    Parse GPU info string.
+    Args:
+        gpu_byte_string: byte string structured 'gres:(optional:type):num_gpus'
+        job_time: job time associated with this gpu request
+    Return:
+        gpuSpec object
+    """
+    # split gres list by gpu_type/gpu_box
+    gres_nodes = gres.split(b',')
+
+    separated_gpu_info = gres.split(b':')
+    if len(separated_gpu_info) == 3:
+        gres, gres_type, num_gres = separated_gpu_info
+    elif len(separated_gpu_info) == 2:
+        gres, num_gres = separated_gpu_info
+        gres_type = b'unspecified'
+    else:
+        gres = b'(null)'
+        gres_type = b'unspecified'
+        num_gres = 0
+
+    gpu_info = {
+            'gres':gres.decode("utf-8"),
+            'gres_type': gres_type.decode("utf-8"),
+            'num_gres': int(num_gres) if num_gres != b'(null)' else 0
+            }
+    return gpu_info
+
+DEFAULT_FORMAT = "start,end,JobID,partition,ncpus,nodelist,AllocGRES"
 DEFAULT_FORMAT_KEY_DICT = OrderedDict(zip(DEFAULT_FORMAT.split(','),list(range(len(DEFAULT_FORMAT)))))
 class Dict2Class(object):
     def __init__(self, init_dict):
@@ -46,15 +79,18 @@ def parse_sacct_response(
     sacct_info = {}
     # Note - index from 2 to remove key line and delimiter line
     for job in query_response[2:-1]:
-        job_id = job[key.JobID] 
+        job_id = job[key.JobID]
+        #TODO(Foundry42): check this logic and whether it always applies
+        # Clean this filtering logic by adding a generic filter config
+        if '.' in job_id.decode("utf-8"):
+            continue
         job_prime = job
         job_prime[key.start] = date_interpreter(job[key.start])
         job_prime[key.end] = date_interpreter(job[key.end])
         # if no GPU, the list is shorter
-        if len(job_prime) < key.AllocGRES:
-            job_prime.append(0) 
+        if len(job_prime) < (key.AllocGRES + 1):
+            job_prime.append(b'gpu:0') 
         sacct_info[job_id] = job_prime
-    print(sacct_info)
     return sacct_info
 
 def date_interpreter(
@@ -112,13 +148,8 @@ def map_sacct_info(
         for jobid, jobdetails in sacct_info.items():
             start = jobdetails[key.start]
             end = jobdetails[key.end]
-            print('start: ', start)
-            print('end: ', end)
-            print('time: ', time)
             if time >= start and time <= end:
-                print('jobid: ', jobid)
                 jobs_now.append(jobdetails)
-            print('-------')
         time_data[time] = jobs_now
     for time, jobs in time_data.items():
         total_ncpus = 0
@@ -126,15 +157,17 @@ def map_sacct_info(
         for job in jobs:
             print('job: ', job)
             print('job len: ', len(job))
-
             print('allocGRES key: ',key.AllocGRES) 
-            gres = job[key.AllocGRES]
+            gres = parse_gres(job[key.AllocGRES])
             ncpus = job[key.ncpus]
+            total_ncpus += int(ncpus)
+            total_ngres += gres['num_gres']
             print('gres: ', gres)
-        time_data[time] = {'details': jobs}
+        time_data[time] = {'details': 'temp not', 'total_ncpus': total_ncpus, 'total_ngpres': total_ngres}
+    print('time_data: ', time_data)
     return time_data
 
 sacct_info = parse_sacct_response(start_time="2022-07-03", key=DFK)
 date_interpreter(b'2019-01-07T17:15:32')
 
-print(map_sacct_info(start_time=b'2022-07-03T17:15:32', end_time=b'2022-07-05T22:15:32', sacct_info=sacct_info, key=DFK))
+map_sacct_info(start_time=b'2022-07-03T17:15:32', end_time=b'2022-07-05T22:15:32', sacct_info=sacct_info, key=DFK)
